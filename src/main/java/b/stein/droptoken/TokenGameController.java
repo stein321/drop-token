@@ -42,10 +42,11 @@ public class TokenGameController {
         Map response = new HashMap();
         response.put("players", game.getPlayers());
         response.put("state", game.getState());
-        if( game.getWinner().isPresent() )
+        if (game.getWinner().isPresent())
             response.put("winner", game.getWinner());
         return response;
     }
+
     @RequestMapping(value = "/drop_token/{gameId}/moves", method = RequestMethod.GET)
     public Map<String, List> getListOfMoves(@PathVariable("gameId") String id) {
         Map moves = new HashMap();
