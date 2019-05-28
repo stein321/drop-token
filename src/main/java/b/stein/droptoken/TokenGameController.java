@@ -51,12 +51,17 @@ public class TokenGameController {
     public Map<String, List> getListOfMoves(@PathVariable("gameId") String id) {
         HashMap moves = new HashMap();
         Game game = repository.findGameById(id);
-        if (game != null && game.getMoves().size() > 0) {
-            moves.put("moves", game.getMoves());
+        if (game != null  ) {
+            if ( game.getMoves().size() > 0)
+                moves.put("moves", game.getMoves());
+            else
+                throw new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Moves not found"
+                );
         }
         else
             throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "Game/Moves not found"
+                    HttpStatus.NOT_FOUND, "Game not found"
             );
         return moves;
     }
