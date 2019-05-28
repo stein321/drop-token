@@ -2,7 +2,6 @@ package b.stein.droptoken;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -17,8 +16,8 @@ public class TokenGameController {
     @Autowired
     private GameRepository repository;
 
-    @RequestMapping(value = "/drop_token/", method = RequestMethod.GET)
-    public Map getGames() {
+    @RequestMapping(value = "/drop_token", method = RequestMethod.GET)
+    public Map<String, List<String>> getGames() {
         HashMap<String, List<String>> map = new HashMap<>();
         List<String> gameIds = repository.findAll().stream().map(Game::getId).collect(Collectors.toList());
         map.put("games", gameIds);
@@ -26,7 +25,7 @@ public class TokenGameController {
     }
 
     @RequestMapping(value = "/drop_token/{gameId}", method = RequestMethod.GET)
-    public Game getOneGame(@PathVariable("gameId") String id) {
+    public Map getOneGame(@PathVariable("gameId") String id) {
         Game game;
         try {
             game = repository.findGameById(id);
@@ -35,13 +34,29 @@ public class TokenGameController {
                     HttpStatus.NOT_FOUND, "Malformed request"
             );
         }
-
         if (game == null) {
             throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "Game/moves not found"
+                    HttpStatus.NOT_FOUND, "Game not found"
             );
         }
-        return game;
+        Map response = new HashMap();
+        response.put("players", game.getPlayers());
+        response.put("state", game.getState());
+        if( game.getWinner().isPresent() )
+            response.put("winner", game.getWinner());
+        return response;
+    }
+    @RequestMapping(value = "/drop_token/{gameId}/moves", method = RequestMethod.GET)
+    public Map<String, List> getListOfMoves(@PathVariable("gameId") String id) {
+        Map moves = new HashMap();
+        Game game = repository.findGameById(id);
+        if (game != null)
+            moves.put(moves, game.getMoves());
+        else
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "Game not found"
+            );
+        return moves;
     }
 
     @RequestMapping(value = "/drop_token", method = RequestMethod.POST)
