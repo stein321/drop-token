@@ -3,6 +3,7 @@ package b.stein.droptoken;
 import org.springframework.data.annotation.Id;
 
 import java.util.List;
+import java.util.Optional;
 
 public class Game {
     @Id
@@ -12,12 +13,35 @@ public class Game {
     private int rows;
     private int columns;
     private GameState state;
+    private List<Move> moves;
+    private Optional<String> winner;
 
     public Game(List players, int rows, int columns) {
         this.rows = rows;
         this.columns = columns;
         this.players = players;
         this.state = GameState.IN_PROGRESS;
+        this.winner = Optional.empty();
+    }
+    public Move makeMove(Move move) {
+        moves.add(move);
+        return move;
+    }
+
+    public Optional<String> getWinner() {
+        return winner;
+    }
+
+    public void setWinner(Optional<String> winner) {
+        this.winner = winner;
+    }
+
+    public List<Move> getMoves() {
+        return moves;
+    }
+
+    public void setMoves(List<Move> moves) {
+        this.moves = moves;
     }
 
     public String getId() {
