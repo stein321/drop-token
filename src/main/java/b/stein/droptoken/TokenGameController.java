@@ -47,6 +47,21 @@ public class TokenGameController {
         return response;
     }
 
+    @RequestMapping(value = "/drop_token/{gameId}/{playerId}", method = RequestMethod.POST)
+    public Map<String,Integer> postAMove(@PathVariable("gameId") String gameId, @PathVariable("playerId") String playerId, @RequestBody Map request) {
+        //deal with gameId
+        //check playerId exists in game
+        //check column
+        if ( (int)request.get("column") >= 0  ) { // this throws 500 if column is a string
+            Map response = new HashMap();
+            response.put("column", request.get("column"));
+            return  response;
+        }
+        throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST, "Malformed input. Illegal move"
+        );
+    }
+
     @RequestMapping(value = "/drop_token/{gameId}/moves", method = RequestMethod.GET)
     public Map<String, List> getListOfMoves(@PathVariable("gameId") String id) {
         HashMap moves = new HashMap();
