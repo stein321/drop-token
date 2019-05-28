@@ -49,13 +49,14 @@ public class TokenGameController {
 
     @RequestMapping(value = "/drop_token/{gameId}/moves", method = RequestMethod.GET)
     public Map<String, List> getListOfMoves(@PathVariable("gameId") String id) {
-        Map moves = new HashMap();
+        HashMap moves = new HashMap();
         Game game = repository.findGameById(id);
-        if (game != null)
-            moves.put(moves, game.getMoves());
+        if (game != null && game.getMoves().size() > 0) {
+            moves.put("moves", game.getMoves());
+        }
         else
             throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "Game not found"
+                    HttpStatus.NOT_FOUND, "Game/Moves not found"
             );
         return moves;
     }

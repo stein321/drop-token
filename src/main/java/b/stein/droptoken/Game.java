@@ -2,6 +2,7 @@ package b.stein.droptoken;
 
 import org.springframework.data.annotation.Id;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,6 +23,7 @@ public class Game {
         this.players = players;
         this.state = GameState.IN_PROGRESS;
         this.winner = Optional.empty();
+        this.moves = new ArrayList<Move>();
     }
     public Move makeMove(Move move) {
         moves.add(move);
