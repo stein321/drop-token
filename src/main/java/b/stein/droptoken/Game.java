@@ -19,20 +19,22 @@ public class Game {
     private int columns;
     @NotNull
     private GameState state;
+    private String turn;
     private List<Move> moves;
     private Optional<String> winner;
 
-    public Game(List players, int rows, int columns) {
+    public Game(List<String> players, int rows, int columns) {
         this.rows = rows;
         this.columns = columns;
         this.players = players;
         this.state = GameState.IN_PROGRESS;
         this.winner = Optional.empty();
-        this.moves = new ArrayList<Move>();
+        this.moves = new ArrayList<>();
+        this.turn = players.get(0);
     }
-    public Move makeMove(Move move) {
+    public void makeMove(Move move) {
         moves.add(move);
-        return move;
+//        return move;
     }
 
     public Optional<String> getWinner() {
@@ -89,5 +91,12 @@ public class Game {
 
     public void setState(GameState state) {
         this.state = state;
+    }
+    public String getTurn() {
+        return turn;
+    }
+
+    public void setTurn(String turn) {
+        this.turn = turn;
     }
 }
