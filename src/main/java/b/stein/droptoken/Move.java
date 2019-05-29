@@ -6,18 +6,20 @@ import java.util.Optional;
 public class Move {
     private MoveType type;
     private String player;
-    private Optional<Integer> column;
+    private int column;
 
     public Move(MoveType type, String player, Integer column) {
         this.type = type;
         this.player = player;
-        this.column = Optional.of(column);
+        this.column = column;
     }
 
     public Move(MoveType type, String player) {
         this.type = type;
         this.player = player;
-        this.column = Optional.empty();
+    }
+
+    public Move() {
     }
 
     public MoveType getType() {
@@ -36,11 +38,11 @@ public class Move {
         this.player = player;
     }
 
-    public Optional<Integer> getColumn() {
+    public int getColumn() {
         return column;
     }
 
-    public void setColumn(Optional<Integer> column) {
+    public void setColumn(int column) {
         this.column = column;
     }
 }
