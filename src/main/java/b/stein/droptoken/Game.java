@@ -2,6 +2,7 @@ package b.stein.droptoken;
 
 import org.springframework.data.annotation.Id;
 
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -10,9 +11,13 @@ public class Game {
     @Id
     private String id;
 
+    @NotNull
     private List players;
+    @NotNull
     private int rows;
+    @NotNull
     private int columns;
+    @NotNull
     private GameState state;
     private List<Move> moves;
     private Optional<String> winner;
