@@ -7,7 +7,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
-import java.lang.annotation.Repeatable;
+import javax.websocket.server.PathParam;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,21 +61,27 @@ public class TokenGameController {
         //make move
         //TODO: add token to column
         //add to move List
-        game.makeMove(new Move(MoveType.MOVE,playerId,column));
+        game.makeMove(new Move(MoveType.MOVE, playerId, column));
         //see if that wins
-        //TODO:run algorithm on array
+        //TODO:run algorithm on newest move
+        //TODO:left-right
+        //TODO: diagnal right, left
+        //TODO: vertical
         game.setTurn(game.getPlayers().get(0).equals(playerId) ? game.getPlayers().get(1) : game.getPlayers().get(0));
         repository.save(game);
         return new ResponseEntity(HttpStatus.OK);
     }
 
     @RequestMapping(value = "/drop_token/{gameId}/moves", method = RequestMethod.GET)
-    public Map<String, List> getListOfMoves(@PathVariable("gameId") String id) {
-        HashMap moves = new HashMap();
+    public ResponseEntity getListOfMoves(@PathVariable("gameId") String id, @PathParam("start") Integer start, @PathParam("until") Integer until) {
+        ArrayList<Move> moves;
         Game game = repository.findGameById(id);
+        //TODO: validate optional parameters
+
+
         if (game != null) {
             if (game.getMoves().size() > 0)
-                moves.put("moves", game.getMoves());
+                moves = (ArrayList<Move>) game.getMoves();
             else
                 throw new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Moves not found"
@@ -83,7 +90,11 @@ public class TokenGameController {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "Game not found"
             );
-        return moves;
+        if( start == null )
+            start = 0;
+        if( until == null)
+            until = moves.size()-1;
+        return new ResponseEntity(moves.subList(start,until), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/drop_token", method = RequestMethod.POST)
