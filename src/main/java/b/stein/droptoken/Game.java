@@ -51,9 +51,10 @@ public class Game {
         }
         if (!validMove)
             throw new Exception("Invalid move");
-        System.out.println(Arrays.deepToString(board));
         if (seeIfWinner(i, move)) {
             winner = move.getPlayer();
+            state = GameState.Done;
+        } else if (checkIfDraw(board)) {
             state = GameState.Done;
         } else {
             setTurn(getPlayers().get(0).equals(move.getPlayer()) ? getPlayers().get(1) : getPlayers().get(0));
@@ -62,16 +63,13 @@ public class Game {
 
     private boolean seeIfWinner(int row, Move move) {
 
-        if (checkListIfWinner(board[row - 1], getPlayers().indexOf(move.getPlayer())))
+        if (checkListIfWinner(board[row], getPlayers().indexOf(move.getPlayer())))
             return true;
-        int[] columnArray = IntStream.range(0, row - 1).map(i -> board[i][move.getColumn()]).toArray();
+        int[] columnArray = IntStream.range(0, row + 1).map(i -> board[i][move.getColumn()]).toArray();
         if (checkListIfWinner(columnArray, getPlayers().indexOf(move.getPlayer())))
             return true;
-
-        //get left right diagnal
-        //get right left diagnal
-
-
+        //todo:get left right diagnal
+        //todo:get right left diagnal
         return false;
     }
 
@@ -85,6 +83,11 @@ public class Game {
             } else count = 0;
         }
         return false;
+    }
+
+    private boolean checkIfDraw(int[][] board) {
+        boolean doesArrayContainerZeros = Arrays.stream(board).flatMapToInt(Arrays::stream).anyMatch(value -> value == 0);
+        return !doesArrayContainerZeros;
     }
 
     public int[][] getBoard() {
