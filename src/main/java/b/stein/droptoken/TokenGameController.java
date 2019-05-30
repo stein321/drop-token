@@ -39,7 +39,7 @@ public class TokenGameController {
         Map response = new HashMap();
         response.put("players", game.getPlayers());
         response.put("state", game.getState());
-        if (game.getWinner().isPresent())
+        if (game.getWinner() != null)
             response.put("winner", game.getWinner());
         return new ResponseEntity(response, HttpStatus.OK);
     }
@@ -114,6 +114,26 @@ public class TokenGameController {
         map.put("gameId", newGame.getId());
         return map;
     }
+    @RequestMapping(value = "/drop_token/{gameId}/{playerId}", method = RequestMethod.DELETE)
+    public ResponseEntity quitGame(@PathVariable("gameId") String gameId, @PathVariable("playerId") String playerId) {
+        Game game;
+        try {
+            game = getGameAndValidate(gameId);
+        } catch (Exception exception) {
+            return new ResponseEntity("Game not found", HttpStatus.NOT_FOUND);
+        }
+        if( !game.getPlayers().contains(playerId) )
+            return new ResponseEntity("Player is not a part of game", HttpStatus.NOT_FOUND);
+        if( game.getState() == GameState.Done)
+            return new ResponseEntity("Game is already in DONE state", HttpStatus.GONE);
+        game.getMoves().add(new Move(MoveType.QUIT, playerId));
+        game.getPlayers().remove(playerId);
+        game.setWinner(game.getPlayers().get(0));
+        game.setState(GameState.Done);
+        repository.save(game);
+        return new ResponseEntity(HttpStatus.ACCEPTED);
+    }
+
     private List getMoves(String id) throws Exception {
         Game game = getGameAndValidate(id);
         return game.getMoves();
