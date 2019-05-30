@@ -73,23 +73,27 @@ public class TokenGameController {
     }
 
     @RequestMapping(value = "/drop_token/{gameId}/moves", method = RequestMethod.GET)
-    public ResponseEntity getListOfMoves(@PathVariable(value = "gameId") String id, @PathVariable(value = "start", required = false) Integer start, @PathVariable(value = "until", required = false) Integer until) {
+    public ResponseEntity getListOfMoves(@PathVariable(value = "gameId") String id, @PathParam("start") Integer start, @PathParam("until") Integer until) {
         ArrayList<Move> moves;
         Game game = repository.findGameById(id);
-        //TODO: validate optional parameters
-
-
         if (game != null) {
-            if (game.getMoves().size() > 0)
+            if (game.getMoves().size() > 0) {
                 moves = (ArrayList<Move>) game.getMoves();
-            else
+            }
+            else {
                 return new ResponseEntity("Moves not found", HttpStatus.NOT_FOUND);
-        } else
+            }
+        } else {
             return new ResponseEntity("Game not found", HttpStatus.NOT_FOUND);
-        if( start == null )
+        }
+        if( start == null ) {
             start = 0;
-        if( until == null)
+        }
+        if( until == null) {
             until = moves.size();
+        }
+        if(until > moves.size() || until < start || start < 0)
+            return new ResponseEntity("Malformed request", HttpStatus.BAD_REQUEST);
         return new ResponseEntity(moves.subList(start,until), HttpStatus.OK);
     }
 
