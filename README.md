@@ -1,6 +1,8 @@
 # Drop Token
 
 ## Requirements 
+ * Java 11
+ * Maven 3 (use included maven wrapper if not)
  * Mongo db running on the default port  
   
 ## Build 
