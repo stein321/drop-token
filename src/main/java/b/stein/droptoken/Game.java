@@ -21,14 +21,14 @@ public class Game {
     private GameState state;
     private String turn;
     private List<Move> moves;
-    private Optional<String> winner;
+    private String winner;
 
     public Game(List<String> players, int rows, int columns) {
         this.rows = rows;
         this.columns = columns;
         this.players = players;
         this.state = GameState.IN_PROGRESS;
-        this.winner = Optional.empty();
+        this.winner = null;
         this.moves = new ArrayList<>();
         this.turn = players.get(0);
     }
@@ -37,11 +37,11 @@ public class Game {
 //        return move;
     }
 
-    public Optional<String> getWinner() {
+    public String getWinner() {
         return winner;
     }
 
-    public void setWinner(Optional<String> winner) {
+    public void setWinner(String winner) {
         this.winner = winner;
     }
 
