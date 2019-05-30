@@ -1,5 +1,8 @@
 # Drop Token
 
+## Requirements 
+ * Mongo db running on the default port  
+  
 ## Build 
  `mvn clean install`
  
