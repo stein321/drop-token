@@ -86,8 +86,8 @@ public class Game {
     }
 
     private boolean checkIfDraw(int[][] board) {
-        boolean doesArrayContainerZeros = Arrays.stream(board).flatMapToInt(Arrays::stream).anyMatch(value -> value == 0);
-        return !doesArrayContainerZeros;
+        boolean doesArrayContainZeros = Arrays.stream(board).flatMapToInt(Arrays::stream).anyMatch(value -> value == 0);
+        return !doesArrayContainZeros;
     }
 
     public int[][] getBoard() {
