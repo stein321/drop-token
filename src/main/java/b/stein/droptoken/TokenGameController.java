@@ -73,7 +73,7 @@ public class TokenGameController {
     }
 
     @RequestMapping(value = "/drop_token/{gameId}/moves", method = RequestMethod.GET)
-    public ResponseEntity getListOfMoves(@PathVariable("gameId") String id, @PathParam("start") Integer start, @PathParam("until") Integer until) {
+    public ResponseEntity getListOfMoves(@PathVariable(value = "gameId") String id, @PathVariable(value = "start", required = false) Integer start, @PathVariable(value = "until", required = false) Integer until) {
         ArrayList<Move> moves;
         Game game = repository.findGameById(id);
         //TODO: validate optional parameters
@@ -83,17 +83,13 @@ public class TokenGameController {
             if (game.getMoves().size() > 0)
                 moves = (ArrayList<Move>) game.getMoves();
             else
-                throw new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Moves not found"
-                );
+                return new ResponseEntity("Moves not found", HttpStatus.NOT_FOUND);
         } else
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "Game not found"
-            );
+            return new ResponseEntity("Game not found", HttpStatus.NOT_FOUND);
         if( start == null )
             start = 0;
         if( until == null)
-            until = moves.size()-1;
+            until = moves.size();
         return new ResponseEntity(moves.subList(start,until), HttpStatus.OK);
     }
 
