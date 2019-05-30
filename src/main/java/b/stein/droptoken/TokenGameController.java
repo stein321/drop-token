@@ -73,17 +73,11 @@ public class TokenGameController {
     }
 
     @RequestMapping(value = "/drop_token/{gameId}/moves", method = RequestMethod.GET)
-    public ResponseEntity getListOfMoves(@PathVariable(value = "gameId") String id, @PathParam("start") Integer start, @PathParam("until") Integer until) {
-        ArrayList<Move> moves;
-        Game game = repository.findGameById(id);
-        if (game != null) {
-            if (game.getMoves().size() > 0) {
-                moves = (ArrayList<Move>) game.getMoves();
-            }
-            else {
-                return new ResponseEntity("Moves not found", HttpStatus.NOT_FOUND);
-            }
-        } else {
+    public ResponseEntity getListOfMoves(@PathVariable("gameId") String id, @PathParam("start") Integer start, @PathParam("until") Integer until) {
+        List moves;
+        try {
+            moves = getMoves(id);
+        } catch (Exception exception) {
             return new ResponseEntity("Game not found", HttpStatus.NOT_FOUND);
         }
         if( start == null ) {
@@ -96,6 +90,20 @@ public class TokenGameController {
             return new ResponseEntity("Malformed request", HttpStatus.BAD_REQUEST);
         return new ResponseEntity(moves.subList(start,until), HttpStatus.OK);
     }
+    @RequestMapping(value = "/drop_token/{gameId}/moves/{move_number}", method = RequestMethod.GET)
+    public ResponseEntity getASpecificMove(@PathVariable("gameId") String id, @PathVariable("move_number") int moveNumber) {
+        if ( moveNumber == 0)
+            return new ResponseEntity("Malformed input", HttpStatus.BAD_REQUEST);
+        List moves;
+        try {
+            moves = getMoves(id);
+        } catch (Exception exception) {
+            return new ResponseEntity("Game not found", HttpStatus.NOT_FOUND);
+        }
+        if (moves.size() < moveNumber )
+            return new ResponseEntity("Moves not found", HttpStatus.NOT_FOUND);
+        return new ResponseEntity(moves.get(moveNumber-1), HttpStatus.OK);
+    }
 
     @RequestMapping(value = "/drop_token", method = RequestMethod.POST)
     public Map<String, String> createGame(@Valid @RequestBody Game game) {
@@ -104,6 +112,17 @@ public class TokenGameController {
         HashMap<String, String> map = new HashMap<>();
         map.put("gameId", newGame.getId());
         return map;
+    }
+    private List getMoves(String id) throws Exception {
+        Game game = getGameAndValidate(id);
+        return game.getMoves();
+    }
+    private Game getGameAndValidate(String id) throws Exception {
+        Game game = repository.findGameById(id);
+        if( game == null)
+            throw new Exception("Game not found");
+        else
+            return game;
     }
 
 }
