@@ -59,16 +59,13 @@ public class TokenGameController {
             return new ResponseEntity("Illegal move", HttpStatus.BAD_REQUEST);
         if (!playerId.equals(game.getTurn()))
             return new ResponseEntity("Player tried to post when it’s not their turn", HttpStatus.CONFLICT);
-        //make move
-        //TODO: add token to column
+
         //add to move List
-        game.makeMove(new Move(MoveType.MOVE, playerId, column));
-        //see if that wins
-        //TODO:run algorithm on newest move
-        //TODO:left-right
-        //TODO: diagnal right, left
-        //TODO: vertical
-        game.setTurn(game.getPlayers().get(0).equals(playerId) ? game.getPlayers().get(1) : game.getPlayers().get(0));
+        try {
+            game.makeMove(new Move(MoveType.MOVE, playerId, column));
+        } catch (Exception e) {
+            return new ResponseEntity("Illegal move", HttpStatus.BAD_REQUEST);
+        }
         repository.save(game);
         return new ResponseEntity(HttpStatus.OK);
     }
