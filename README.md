@@ -8,5 +8,5 @@
  
 ## Run 
    `java -jar target/drop-token.jar`
-## Run with Devtools 
+## Run Locally with auto restart on class re-compile
    `mvn spring-boot:run` 
