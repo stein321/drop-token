@@ -31,8 +31,9 @@ public class TokenGameController {
     @RequestMapping(value = "/drop_token/{gameId}", method = RequestMethod.GET)
     public ResponseEntity getOneGame(@PathVariable("gameId") String gameId) {
         Game game;
-        game = repository.findGameById(gameId);
-        if (game == null) {
+        try {
+            game = getGameAndValidate(gameId);
+        } catch (Exception exception) {
             return new ResponseEntity("Game Not Found", HttpStatus.NOT_FOUND);
         }
         Map response = new HashMap();
