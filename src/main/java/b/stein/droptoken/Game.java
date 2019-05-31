@@ -68,6 +68,7 @@ public class Game {
         int[] columnArray = IntStream.range(0, row + 1).map(i -> board[i][move.getColumn()]).toArray();
         if (checkListIfWinner(columnArray, getPlayers().indexOf(move.getPlayer())))
             return true;
+        List diagList = new ArrayList();
         //todo:get left right diagnal
         //todo:get right left diagnal
         return false;
@@ -86,7 +87,7 @@ public class Game {
     }
 
     private boolean checkIfDraw(int[][] board) {
-        boolean doesArrayContainZeros = Arrays.stream(board).flatMapToInt(Arrays::stream).anyMatch(value -> value == 0);
+        boolean doesArrayContainZeros = Arrays.stream(board[rows-1]).anyMatch(value -> value == 0);
         return !doesArrayContainZeros;
     }
 
