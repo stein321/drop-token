@@ -9,6 +9,6 @@ resource "aws_instance" "example" {
   key_name = var.keyName
 
   provisioner "local-exec" {
-    command = "sleep 60 && cat installJava.sh | ssh -o StrictHostKeyChecking=no -i ~/.ssh/ssh-hack.pem ec2-user@${aws_instance.example.public_ip}"
+    command = "sleep 60 && cat installJava.sh | ssh -o StrictHostKeyChecking=no -i ~/.ssh/${var.keyName}.pem ec2-user@${aws_instance.example.public_ip}"
   }
 }
