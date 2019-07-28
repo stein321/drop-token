@@ -6,6 +6,7 @@ resource "aws_security_group" "mongo-access" {
   name = "mongo-access"
   description = "for accessing mongo"
 
+  //todo: this is insecure, removing later
   ingress {
     description = "ssh access for now"
     from_port = 22
