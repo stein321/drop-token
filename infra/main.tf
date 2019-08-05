@@ -15,6 +15,14 @@ resource "aws_security_group" "mongo-access" {
     cidr_blocks = [
       "0.0.0.0/0"]
   }
+  ingress {
+    description = "app acess"
+    from_port = 8080
+    protocol = "tcp"
+    to_port = 8080
+    cidr_blocks = [
+      "0.0.0.0/0"]
+  }
   egress {
     description = "Letting apps run free for now "
     from_port = 0
@@ -34,14 +42,36 @@ resource "aws_security_group" "mongo" {
     from_port = 27017
     to_port = 27017
     protocol = "tcp"
-    security_groups = [
-      aws_security_group.mongo-access.arn]
+//    security_groups = [
+//      aws_security?_group.mongo-access.arn]
     description = "Default port for mongo"
+    cidr_blocks = [
+      "0.0.0.0/0"]
+  }
+  ingress {
+    description = "ssh access for now"
+    from_port = 22
+    protocol = "tcp"
+    to_port = 22
+    cidr_blocks = [
+      "0.0.0.0/0"]
+  }
+  egress {
+    description = "Allow instance to update itself"
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_blocks = [
+      "0.0.0.0/0"]
   }
   depends_on = [
     aws_security_group.mongo-access
   ]
 }
+
+//resource "aws_iam_role" "" {
+//  assume_role_policy = ""
+//}
 resource "aws_instance" "app-api" {
   ami = "ami-0f2176987ee50226e"
   instance_type = "t2.micro"
@@ -54,6 +84,7 @@ resource "aws_instance" "app-api" {
    wget https://d3pxv6yz143wms.cloudfront.net/11.0.3.7.1/java-11-amazon-corretto-devel-11.0.3.7-1.x86_64.rpm -O /home/ec2-user/java-11.rpm
    sudo yum install -y /home/ec2-user/java-11.rpm
    aws s3 sync s3://stein321-droptoken /home/ec2-user/.
+   aws ssm get-parameter --name "prod-mongo-password" --with-decryption  --query "Parameter.Value" --output text --region us-west-2
   EOF
 }
 
@@ -66,6 +97,16 @@ resource "aws_instance" "mongo" {
   provisioner "local-exec" {
     command = "echo ${aws_instance.mongo.public_dns} > instances.txt"
   }
+  iam_instance_profile = "Mongo"
+  user_data = <<EOF
+  #!/bin/bash
+    sudo apt-get update
+    sudo apt-get -y install awscli
+    mongoPassword=$(grep 'The default' /home/bitnami/bitnami_credentials | cut -d \' -f4 )
+    aws ssm put-parameter --name "prod-mongo-password" --value $mongoPassword --type SecureString --overwrite --region us-west-2
+
+  EOF
+
   depends_on = [
     aws_security_group.mongo-access
   ]
