@@ -89,24 +89,16 @@ resource "aws_instance" "app-api" {
 }
 
 resource "aws_instance" "mongo" {
-  ami = "ami-01d7e588e0f2048a4"
+  ami = "ami-0fab3e151b002489c"
   instance_type = "t2.micro"
   key_name = var.keyName
   security_groups = [
     "${aws_security_group.mongo.name}"]
   provisioner "local-exec" {
-    command = "echo ${aws_instance.mongo.public_dns} > instances.txt"
+    command = "sleep 10 && cat installAwsCli.sh | ssh -o StrictHostKeyChecking=no -i ~/.ssh/${var.keyName}.pem bitnami@${aws_instance.mongo.public_ip}"
   }
+
   iam_instance_profile = "Mongo"
-  user_data = <<EOF
-  #!/bin/bash
-    sudo apt-get update
-    sudo apt-get -y install awscli
-    mongoPassword=$(grep 'The default' /home/bitnami/bitnami_credentials | cut -d \' -f4 )
-    aws ssm put-parameter --name "prod-mongo-password" --value $mongoPassword --type SecureString --overwrite --region us-west-2
-
-  EOF
-
   depends_on = [
     aws_security_group.mongo-access
   ]
