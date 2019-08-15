@@ -1,2 +1,0 @@
-#!/usr/bin/env bash
-aws ssm put-parameter --name "prod-mongo-password" --type SecureString --overwrite --region us-west-2  --value $(grep 'The default' /home/bitnami/bitnami_credentials | cut -d \' -f4)

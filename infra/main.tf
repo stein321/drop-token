@@ -42,8 +42,8 @@ resource "aws_security_group" "mongo" {
     from_port = 27017
     to_port = 27017
     protocol = "tcp"
-//    security_groups = [
-//      aws_security?_group.mongo-access.arn]
+    //    security_groups = [
+    //      aws_security?_group.mongo-access.arn]
     description = "Default port for mongo"
     cidr_blocks = [
       "0.0.0.0/0"]
@@ -94,10 +94,27 @@ resource "aws_instance" "mongo" {
   key_name = var.keyName
   security_groups = [
     "${aws_security_group.mongo.name}"]
-  provisioner "local-exec" {
-    command = "sleep 10 && cat installAwsCli.sh | ssh -o StrictHostKeyChecking=no -i ~/.ssh/${var.keyName}.pem bitnami@${aws_instance.mongo.public_ip}"
+  provisioner "file" {
+    source = "installAwsCli.sh"
+    destination = "/home/bitnami/installAwsCli.sh"
+    connection {
+      type = "ssh"
+      user = "bitnami"
+      host = aws_instance.mongo.public_ip
+      private_key = file("/Users/bstein/.ssh/ssh-hack.pem")
+    }
   }
-
+  provisioner "remote-exec" {
+    inline = [
+      "bash installAwsCli.sh"
+    ]
+    connection {
+      type = "ssh"
+      user = "bitnami"
+      host = aws_instance.mongo.public_ip
+      private_key = file("~/.ssh/ssh-hack.pem")
+    }
+  }
   iam_instance_profile = "Mongo"
   depends_on = [
     aws_security_group.mongo-access
