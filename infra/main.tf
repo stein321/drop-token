@@ -86,6 +86,9 @@ resource "aws_instance" "app-api" {
    aws s3 sync s3://stein321-droptoken /home/ec2-user/.
    aws ssm get-parameter --name "prod-mongo-password" --with-decryption  --query "Parameter.Value" --output text --region us-west-2
   EOF
+  provisioner "local-exec" {
+    command = "echo ${aws_instance.app-api.public_ip} > appUrl.txt"
+  }
 }
 
 resource "aws_instance" "mongo" {
@@ -114,6 +117,9 @@ resource "aws_instance" "mongo" {
       host = aws_instance.mongo.public_ip
       private_key = file("~/.ssh/ssh-hack.pem")
     }
+  }
+  provisioner "local-exec" {
+    command = "echo ${aws_instance.mongo.public_ip} > mongoUrl.txt"
   }
   iam_instance_profile = "Mongo"
   depends_on = [
