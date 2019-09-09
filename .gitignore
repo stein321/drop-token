@@ -17,14 +17,12 @@ HELP.md
 *.iml
 *.ipr
 
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-/build/
-
 ### VS Code ###
 .vscode/
 /infra/terraform.tfstate
+
+## specific files
+infra/instances.txt
+infra/mongoUrl.txt
+infra/.terraform/*
+
