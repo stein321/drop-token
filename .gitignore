@@ -22,5 +22,7 @@ infra/instances.txt
 infra/mongoUrl.txt
 infra/.terraform/*
 infra/terraform.tfstate.backup
+infra/terraform.tfstate
 infra/appUrl.txt
+
 
