@@ -17,12 +17,10 @@ HELP.md
 *.iml
 *.ipr
 
-### VS Code ###
-.vscode/
-/infra/terraform.tfstate
-
 ## specific files
 infra/instances.txt
 infra/mongoUrl.txt
 infra/.terraform/*
+infra/terraform.tfstate.backup
+infra/appUrl.txt
 
